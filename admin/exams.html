@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Questions — ExamShield Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <h2>Exam<span>Shield</span></h2>
+          <p>Admin Panel</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <a href="dashboard.html" class="nav-link"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="add-question.html" class="nav-link"><i class="fas fa-circle-plus"></i> Add Question</a>
+        <a href="exams.html" class="nav-link active"><i class="fas fa-file-alt"></i> Questions</a>
+        <div class="nav-section-label">Reports</div>
+        <a href="dashboard.html#results" class="nav-link"><i class="fas fa-chart-bar"></i> Results</a>
+        <a href="dashboard.html#logs" class="nav-link"><i class="fas fa-shield-exclamation"></i> Security Logs</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="login.html" class="nav-link" onclick="sessionStorage.removeItem('adminUser')">
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="admin-content">
+      <header class="admin-topbar">
+        <div class="topbar-title">
+          <h1><i class="fas fa-file-alt" style="color:var(--primary);margin-right:0.5rem"></i>Question Bank</h1>
+          <p id="q-count-label">Loading questions...</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-secondary" onclick="loadQuestions()">
+            <i class="fas fa-rotate-right"></i> Refresh
+          </button>
+          <a href="add-question.html" class="btn-primary" style="width:auto;padding:0.6rem 1.1rem;text-decoration:none;font-size:0.88rem">
+            <i class="fas fa-plus"></i> Add Question
+          </a>
+          <div class="admin-avatar" id="admin-avatar">A</div>
+        </div>
+      </header>
+
+      <main class="admin-main">
+        <!-- Search bar -->
+        <div style="margin-bottom:1.25rem">
+          <div style="position:relative;max-width:400px">
+            <i class="fas fa-search" style="position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.85rem"></i>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search questions..."
+              oninput="filterQuestions(this.value)"
+              style="width:100%;padding:0.65rem 0.9rem 0.65rem 2.4rem;
+                     background:var(--surface);border:1px solid var(--border);
+                     border-radius:var(--radius);color:var(--text);
+                     font-family:var(--font-body);font-size:0.9rem;outline:none"
+            />
+          </div>
+        </div>
+
+        <!-- Questions list -->
+        <div id="questions-list">
+          <!-- Loading skeletons -->
+          <div class="question-list-item">
+            <div class="q-item-content">
+              <div class="skeleton-cell" style="height:16px;width:80%;margin-bottom:10px;border-radius:4px"></div>
+              <div style="display:flex;gap:0.4rem">
+                <div class="skeleton-cell" style="height:22px;width:80px;border-radius:4px"></div>
+                <div class="skeleton-cell" style="height:22px;width:80px;border-radius:4px"></div>
+                <div class="skeleton-cell" style="height:22px;width:80px;border-radius:4px"></div>
+                <div class="skeleton-cell" style="height:22px;width:80px;border-radius:4px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/exams.js"></script>
+</body>
+</html>

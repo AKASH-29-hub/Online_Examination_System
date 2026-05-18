@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Question — ExamShield Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <h2>Exam<span>Shield</span></h2>
+          <p>Admin Panel</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <a href="dashboard.html" class="nav-link"><i class="fas fa-gauge-high"></i> Dashboard</a>
+        <a href="add-question.html" class="nav-link active"><i class="fas fa-circle-plus"></i> Add Question</a>
+        <a href="exams.html" class="nav-link"><i class="fas fa-file-alt"></i> Questions</a>
+        <div class="nav-section-label">Reports</div>
+        <a href="dashboard.html#results" class="nav-link"><i class="fas fa-chart-bar"></i> Results</a>
+        <a href="dashboard.html#logs" class="nav-link"><i class="fas fa-shield-exclamation"></i> Security Logs</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="login.html" class="nav-link" onclick="sessionStorage.removeItem('adminUser')">
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="admin-content">
+      <header class="admin-topbar">
+        <div class="topbar-title">
+          <h1><i class="fas fa-circle-plus" style="color:var(--primary);margin-right:0.5rem"></i>Add Question</h1>
+          <p>Add a new multiple-choice question to the question bank</p>
+        </div>
+        <div class="topbar-actions">
+          <a href="exams.html" class="btn-secondary">
+            <i class="fas fa-list"></i> View All Questions
+          </a>
+          <div class="admin-avatar" id="admin-avatar">A</div>
+        </div>
+      </header>
+
+      <main class="admin-main">
+        <div style="display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start">
+
+          <!-- Form -->
+          <div class="add-question-form">
+            <div id="success-msg" class="success-banner hidden">
+              <i class="fas fa-check-circle"></i>
+              <span>Question added successfully!</span>
+            </div>
+            <div id="error-msg" class="error-banner hidden">
+              <i class="fas fa-exclamation-circle"></i>
+              <span id="error-text">Error adding question.</span>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-question-circle"></i> Question Text *</label>
+              <textarea
+                id="q-text"
+                placeholder="Enter your question here..."
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-a"></i> Option A *</label>
+                <input type="text" id="opt-a" placeholder="Option A" />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-b"></i> Option B *</label>
+                <input type="text" id="opt-b" placeholder="Option B" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-c"></i> Option C *</label>
+                <input type="text" id="opt-c" placeholder="Option C" />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-d"></i> Option D *</label>
+                <input type="text" id="opt-d" placeholder="Option D" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-check-circle"></i> Correct Answer *</label>
+              <select id="q-correct">
+                <option value="">-- Select correct option --</option>
+                <option value="0">A — Option A</option>
+                <option value="1">B — Option B</option>
+                <option value="2">C — Option C</option>
+                <option value="3">D — Option D</option>
+              </select>
+            </div>
+
+            <div style="display:flex;gap:0.75rem">
+              <button class="btn-primary" id="add-btn" onclick="addQuestion()" style="flex:1">
+                <span id="add-btn-text"><i class="fas fa-plus"></i> Add Question</span>
+                <span id="add-btn-loader" class="hidden"><i class="fas fa-circle-notch fa-spin"></i> Adding...</span>
+              </button>
+              <button class="btn-secondary" onclick="clearForm()">
+                <i class="fas fa-xmark"></i> Clear
+              </button>
+            </div>
+          </div>
+
+          <!-- Tips panel -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <h3><i class="fas fa-lightbulb"></i> Tips</h3>
+            </div>
+            <div class="section-card-body">
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem">
+                <li style="display:flex;gap:0.6rem;font-size:0.85rem;color:var(--text-muted)">
+                  <i class="fas fa-check" style="color:var(--success);margin-top:2px;flex-shrink:0"></i>
+                  Write clear, unambiguous questions with a single correct answer
+                </li>
+                <li style="display:flex;gap:0.6rem;font-size:0.85rem;color:var(--text-muted)">
+                  <i class="fas fa-check" style="color:var(--success);margin-top:2px;flex-shrink:0"></i>
+                  Make all distractors (wrong answers) plausible
+                </li>
+                <li style="display:flex;gap:0.6rem;font-size:0.85rem;color:var(--text-muted)">
+                  <i class="fas fa-check" style="color:var(--success);margin-top:2px;flex-shrink:0"></i>
+                  Keep options similar in length and format
+                </li>
+                <li style="display:flex;gap:0.6rem;font-size:0.85rem;color:var(--text-muted)">
+                  <i class="fas fa-check" style="color:var(--success);margin-top:2px;flex-shrink:0"></i>
+                  Avoid "All of the above" or "None of the above"
+                </li>
+                <li style="display:flex;gap:0.6rem;font-size:0.85rem;color:var(--text-muted)">
+                  <i class="fas fa-check" style="color:var(--success);margin-top:2px;flex-shrink:0"></i>
+                  Questions are randomized for each student session
+                </li>
+              </ul>
+
+              <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)">
+                <p style="font-size:0.8rem;color:var(--text-muted)">
+                  <i class="fas fa-circle-info" style="color:var(--primary);margin-right:0.3rem"></i>
+                  All questions are stored in MongoDB and immediately available to students
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/add-question.js"></script>
+</body>
+</html>
