@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam — ExamShield</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="exam-page">
+
+  <!-- Warning overlay -->
+  <div id="warning-overlay" class="warning-overlay hidden">
+    <div class="warning-modal">
+      <div class="warning-icon"><i class="fas fa-triangle-exclamation"></i></div>
+      <h2>⚠️ Warning!</h2>
+      <p id="warning-msg">Suspicious activity detected.</p>
+      <p class="warning-count-text">Warning <span id="w-current">1</span> of 3</p>
+      <p class="warning-sub">3 warnings will result in automatic submission.</p>
+      <button class="btn-primary" onclick="dismissWarning()">
+        <i class="fas fa-check"></i> I Understand
+      </button>
+    </div>
+  </div>
+
+  <!-- Webcam monitor (small preview) -->
+  <div id="webcam-container" class="webcam-container">
+    <video id="webcam" autoplay muted playsinline></video>
+    <div class="webcam-label"><i class="fas fa-video"></i> Monitoring</div>
+    <!-- Face detection status indicator -->
+    <div id="face-status" class="face-status face-ok">
+      <i class="fas fa-circle-check"></i> <span id="face-status-text">Ready</span>
+    </div>
+  </div>
+
+  <!-- Top exam bar -->
+  <header class="exam-header">
+    <div class="exam-brand">
+      <i class="fas fa-shield-halved"></i>
+      <span>Exam<strong>Shield</strong></span>
+    </div>
+    <div class="exam-info">
+      <span id="student-display"><i class="fas fa-user"></i> Loading...</span>
+    </div>
+    <div class="exam-controls">
+      <div class="warnings-display" id="warnings-display">
+        <i class="fas fa-triangle-exclamation"></i>
+        <span>Warnings: <strong id="warn-count">0</strong>/3</span>
+      </div>
+      <div class="timer-display" id="timer-display">
+        <i class="fas fa-clock"></i>
+        <span id="timer-text">30:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrapper">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+    <span class="progress-label" id="progress-label">0% Complete</span>
+  </div>
+
+  <!-- Main exam layout -->
+  <main class="exam-main">
+
+    <!-- Question panel -->
+    <section class="question-panel" id="question-panel">
+      <div class="q-header">
+        <span class="q-number" id="q-number">Question 1 of 10</span>
+        <span class="q-status-badge" id="q-status-badge">Unanswered</span>
+      </div>
+
+      <div class="q-body">
+        <p class="q-text" id="q-text">Loading question...</p>
+        <div class="options-grid" id="options-grid">
+          <!-- Options injected by JS -->
+        </div>
+      </div>
+
+      <div class="q-nav">
+        <button class="btn-nav" id="prev-btn" onclick="navigateQuestion(-1)">
+          <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <button class="btn-submit-exam" onclick="confirmSubmit()">
+          <i class="fas fa-paper-plane"></i> Submit Exam
+        </button>
+        <button class="btn-nav next" id="next-btn" onclick="navigateQuestion(1)">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="exam-sidebar">
+
+      <div class="sidebar-section">
+        <h4><i class="fas fa-map-grid-2"></i> Question Palette</h4>
+        <div class="question-palette" id="question-palette">
+          <!-- Palette buttons injected by JS -->
+        </div>
+        <div class="palette-legend">
+          <span class="legend-item answered"><i class="fas fa-square"></i> Answered</span>
+          <span class="legend-item current"><i class="fas fa-square"></i> Current</span>
+          <span class="legend-item unanswered"><i class="fas fa-square"></i> Not Answered</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h4><i class="fas fa-chart-bar"></i> Progress</h4>
+        <div class="progress-stats">
+          <div class="stat-row">
+            <span>Answered</span>
+            <strong id="stat-answered">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Remaining</span>
+            <strong id="stat-remaining">10</strong>
+          </div>
+          <div class="stat-row">
+            <span>Total</span>
+            <strong id="stat-total">10</strong>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!--
+    FIX (Bug 1): Load face-api.js WITHOUT defer, BEFORE script.js.
+    Previously face-api.js had `defer` which caused it to finish loading AFTER
+    script.js already ran — making `faceapi` undefined when DOMContentLoaded fired.
+    Both scripts now load synchronously in the correct order.
+  -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

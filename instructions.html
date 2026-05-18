@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instructions — ExamShield</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="instructions-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <div class="instructions-container">
+
+    <div class="instr-header">
+      <div class="brand-icon small">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <div>
+        <h1>Exam<span>Shield</span></h1>
+        <p id="student-greeting">Welcome, Student!</p>
+      </div>
+    </div>
+
+    <div class="instr-card">
+      <h2><i class="fas fa-circle-info"></i> Exam Instructions</h2>
+
+      <div class="instr-grid">
+        <div class="instr-section">
+          <h3><i class="fas fa-list-check"></i> General Rules</h3>
+          <ul>
+            <li><i class="fas fa-check"></i> The exam consists of <strong>10 multiple-choice questions</strong></li>
+            <li><i class="fas fa-check"></i> You have <strong>30 minutes</strong> to complete the exam</li>
+            <li><i class="fas fa-check"></i> Questions are randomized each session</li>
+            <li><i class="fas fa-check"></i> Each question has one correct answer</li>
+            <li><i class="fas fa-check"></i> You can navigate between questions freely</li>
+            <li><i class="fas fa-check"></i> The exam auto-submits when time runs out</li>
+          </ul>
+        </div>
+
+        <div class="instr-section warning-section">
+          <h3><i class="fas fa-triangle-exclamation"></i> Anti-Cheating Policy</h3>
+          <ul>
+            <li><i class="fas fa-ban"></i> <strong>Do NOT switch tabs</strong> — this will trigger a warning</li>
+            <li><i class="fas fa-ban"></i> <strong>Do NOT exit fullscreen</strong> mode during the exam</li>
+            <li><i class="fas fa-ban"></i> <strong>Webcam monitoring</strong> is active throughout</li>
+            <li><i class="fas fa-ban"></i> All keyboard and mouse activity is logged</li>
+            <li><i class="fas fa-ban"></i> <strong>3 warnings = auto-submission</strong> of your exam</li>
+            <li><i class="fas fa-ban"></i> All violations are recorded and reviewed</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="instr-system-check">
+        <h3><i class="fas fa-display"></i> System Requirements</h3>
+        <div class="checks-row">
+          <div class="check-item" id="check-browser">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Modern Browser</span>
+          </div>
+          <div class="check-item" id="check-fullscreen">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Fullscreen API</span>
+          </div>
+          <div class="check-item" id="check-webcam">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Camera Access</span>
+          </div>
+          <div class="check-item" id="check-backend">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Server Connection</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="instr-actions">
+        <label class="checkbox-label">
+          <input type="checkbox" id="agree-check" />
+          <span>I have read and understood the exam instructions and anti-cheating policy</span>
+        </label>
+        <button class="btn-primary" id="start-btn" onclick="startExam()" disabled>
+          <i class="fas fa-play"></i> Start Exam
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "http://127.0.0.1:5000/api";
+    const name = sessionStorage.getItem("studentName");
+
+    // Redirect if not logged in
+    if (!name) window.location.href = "index.html";
+
+    document.getElementById("student-greeting").textContent = `Welcome, ${name}!`;
+
+    // System checks
+    async function runChecks() {
+      // Check browser
+      updateCheck("check-browser", true, "Modern Browser");
+
+      // Check fullscreen API
+      const fsSupport = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+      updateCheck("check-fullscreen", fsSupport, "Fullscreen API");
+
+      // Check webcam
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(t => t.stop());
+        updateCheck("check-webcam", true, "Camera Access");
+      } catch {
+        updateCheck("check-webcam", false, "Camera — DENIED (required)");
+      }
+
+      // Check backend
+      try {
+        const res = await fetch(`${API}/health`);
+        const data = await res.json();
+        updateCheck("check-backend", data.status === "ok", "Server Connection");
+      } catch {
+        updateCheck("check-backend", false, "Server — Offline");
+      }
+    }
+
+    function updateCheck(id, ok, label) {
+      const el = document.getElementById(id);
+      el.innerHTML = `<i class="fas fa-${ok ? "circle-check" : "circle-xmark"}"></i><span>${label}</span>`;
+      el.className = `check-item ${ok ? "check-ok" : "check-fail"}`;
+    }
+
+    // Enable start button when checkbox ticked
+    document.getElementById("agree-check").addEventListener("change", function () {
+      document.getElementById("start-btn").disabled = !this.checked;
+    });
+
+    function startExam() {
+      window.location.href = "exam.html";
+    }
+
+    runChecks();
+  </script>
+</body>
+</html>

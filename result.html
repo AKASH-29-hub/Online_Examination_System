@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results — ExamShield</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body class="result-page">
+
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <div class="result-container">
+
+    <div class="result-header">
+      <div class="brand-icon small">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <h1>Exam<span>Shield</span></h1>
+    </div>
+
+    <div class="result-card">
+      <div class="result-icon-wrap" id="result-icon-wrap">
+        <!-- Injected by JS -->
+      </div>
+
+      <h2 id="result-title">Exam Complete!</h2>
+      <p id="result-subtitle" class="result-subtitle">Here's your performance summary</p>
+
+      <div class="score-circle-wrap">
+        <div class="score-circle" id="score-circle">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="score-bg" />
+            <circle cx="60" cy="60" r="54" class="score-progress" id="score-progress-arc" />
+          </svg>
+          <div class="score-inner">
+            <span class="score-pct" id="score-pct">0%</span>
+            <span class="score-label">Score</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-stats-grid">
+        <div class="result-stat">
+          <div class="stat-icon correct"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-info">
+            <span class="stat-val" id="r-score">0</span>
+            <span class="stat-desc">Correct</span>
+          </div>
+        </div>
+        <div class="result-stat">
+          <div class="stat-icon wrong"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-info">
+            <span class="stat-val" id="r-wrong">0</span>
+            <span class="stat-desc">Incorrect</span>
+          </div>
+        </div>
+        <div class="result-stat">
+          <div class="stat-icon total"><i class="fas fa-list-ol"></i></div>
+          <div class="stat-info">
+            <span class="stat-val" id="r-total">0</span>
+            <span class="stat-desc">Total</span>
+          </div>
+        </div>
+        <div class="result-stat">
+          <div class="stat-icon warn"><i class="fas fa-triangle-exclamation"></i></div>
+          <div class="stat-info">
+            <span class="stat-val" id="r-warnings">0</span>
+            <span class="stat-desc">Warnings</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-grade-banner" id="grade-banner">
+        <!-- Injected by JS -->
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-primary" onclick="window.location.href='index.html'">
+          <i class="fas fa-rotate-left"></i> Take Another Exam
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Retrieve result from sessionStorage
+    const score = parseInt(sessionStorage.getItem("examScore") || 0);
+    const total = parseInt(sessionStorage.getItem("examTotal") || 10);
+    const warnings = parseInt(sessionStorage.getItem("examWarnings") || 0);
+
+    const pct = Math.round((score / total) * 100);
+
+    // Fill in stats
+    document.getElementById("r-score").textContent = score;
+    document.getElementById("r-wrong").textContent = total - score;
+    document.getElementById("r-total").textContent = total;
+    document.getElementById("r-warnings").textContent = warnings;
+    document.getElementById("score-pct").textContent = pct + "%";
+
+    // Animate score arc
+    const arc = document.getElementById("score-progress-arc");
+    const circumference = 2 * Math.PI * 54;
+    arc.style.strokeDasharray = circumference;
+    arc.style.strokeDashoffset = circumference;
+
+    let grade, gradeColor, iconHtml;
+    if (pct >= 90) {
+      grade = "Outstanding"; gradeColor = "#22d3ee"; iconHtml = '<i class="fas fa-trophy"></i>';
+    } else if (pct >= 75) {
+      grade = "Excellent"; gradeColor = "#4ade80"; iconHtml = '<i class="fas fa-star"></i>';
+    } else if (pct >= 60) {
+      grade = "Good"; gradeColor = "#a3e635"; iconHtml = '<i class="fas fa-thumbs-up"></i>';
+    } else if (pct >= 40) {
+      grade = "Average"; gradeColor = "#fbbf24"; iconHtml = '<i class="fas fa-minus-circle"></i>';
+    } else {
+      grade = "Needs Improvement"; gradeColor = "#f87171"; iconHtml = '<i class="fas fa-book-open"></i>';
+    }
+
+    document.getElementById("result-icon-wrap").innerHTML = iconHtml;
+    document.getElementById("result-icon-wrap").style.color = gradeColor;
+    document.getElementById("grade-banner").innerHTML = `
+      <span style="color:${gradeColor}">
+        <i class="fas fa-award"></i> Grade: <strong>${grade}</strong> — ${pct}%
+      </span>`;
+
+    arc.style.stroke = gradeColor;
+
+    // Animate arc after a short delay
+    setTimeout(() => {
+      const offset = circumference - (pct / 100) * circumference;
+      arc.style.transition = "stroke-dashoffset 1.5s ease";
+      arc.style.strokeDashoffset = offset;
+    }, 300);
+
+    // Animate score pct counter
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      document.getElementById("score-pct").textContent = count + "%";
+      if (count >= pct) clearInterval(interval);
+    }, 1500 / (pct || 1));
+  </script>
+</body>
+</html>
